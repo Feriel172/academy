@@ -8,8 +8,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Label } from "@/components/ui/label"
 import { Plus, Search, X } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { getSubjectsAndLevels } from "@/lib/actions/data"
 import { addStudent, getStudents } from "@/lib/actions/students"
+import { getStudentPayments } from "@/lib/actions/payments"
 
 type Subject = { id: string; name: string }
 type Level = { id: string; name: string }
@@ -24,6 +26,8 @@ export default function StudentSection() {
   const [levels, setLevels] = useState<Level[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isPending, startTransition] = useTransition()
+  const [studentPayments, setStudentPayments] = useState<any[]>([])
+  const [isLoadingPayments, setIsLoadingPayments] = useState(false)
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -300,7 +304,16 @@ export default function StudentSection() {
             <Card
               key={student.id}
               className="cursor-pointer hover:shadow-lg transition-shadow"
-              onClick={() => setSelectedStudent(student)}
+              onClick={async () => {
+                setSelectedStudent(student)
+                // Load payment history for selected student
+                setIsLoadingPayments(true)
+                const result = await getStudentPayments(student.id)
+                if (result.success) {
+                  setStudentPayments(result.payments || [])
+                }
+                setIsLoadingPayments(false)
+              }}
             >
               <CardHeader>
                 <CardTitle className="text-lg">
@@ -368,7 +381,51 @@ export default function StudentSection() {
 
             <div className="pt-4 border-t">
               <h3 className="font-semibold mb-4">Payment History</h3>
-              <p className="text-muted-foreground">No payments recorded yet</p>
+              {isLoadingPayments ? (
+                <p className="text-muted-foreground">Loading payments...</p>
+              ) : studentPayments.length === 0 ? (
+                <p className="text-muted-foreground">No payments recorded yet</p>
+              ) : (
+                <div className="rounded-md border">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Date</TableHead>
+                        <TableHead>Subject</TableHead>
+                        <TableHead>Level</TableHead>
+                        <TableHead>Month</TableHead>
+                        <TableHead className="text-right">Amount</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {studentPayments.map((payment) => (
+                        <TableRow key={payment.id}>
+                          <TableCell>
+                            {new Date(payment.payment_date).toLocaleDateString("en-US", {
+                              year: "numeric",
+                              month: "short",
+                              day: "numeric",
+                            })}
+                          </TableCell>
+                          <TableCell>{payment.subject_levels?.subjects?.name || "-"}</TableCell>
+                          <TableCell>{payment.subject_levels?.levels?.name || "-"}</TableCell>
+                          <TableCell>
+                            {payment.month_paid_for
+                              ? new Date(payment.month_paid_for + "-01").toLocaleDateString("en-US", {
+                                  year: "numeric",
+                                  month: "long",
+                                })
+                              : "-"}
+                          </TableCell>
+                          <TableCell className="text-right font-medium">
+                            {parseFloat(payment.amount).toLocaleString()} DZD
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
             </div>
             <div className="pt-4 border-t">
               <h3 className="font-semibold mb-4">Attendance</h3>

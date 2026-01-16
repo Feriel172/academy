@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button"
 import { Calendar, Users, BookOpen, ClipboardCheck } from "lucide-react"
 import AttendanceDialog from "./attendance-dialog"
+import PaymentAlerts from "./payment-alerts"
 
 export default function HomeSection() {
   const [isAttendanceDialogOpen, setIsAttendanceDialogOpen] = useState(false)
@@ -66,6 +67,9 @@ export default function HomeSection() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Payment Alerts */}
+      <PaymentAlerts />
 
       <AttendanceDialog
         open={isAttendanceDialogOpen}
