@@ -3,8 +3,8 @@
 import { Button } from "@/components/ui/button"
 
 interface NavigationProps {
-  activeSection: "students" | "teachers" | "payroll"
-  onSectionChange: (section: "students" | "teachers" | "payroll") => void
+  activeSection: "students" | "teachers" | "payroll" | "settings"
+  onSectionChange: (section: "students" | "teachers" | "payroll" | "settings") => void
 }
 
 export default function Navigation({ activeSection, onSectionChange }: NavigationProps) {
@@ -31,6 +31,13 @@ export default function Navigation({ activeSection, onSectionChange }: Navigatio
           className="font-medium"
         >
           Payroll
+        </Button>
+        <Button
+          onClick={() => onSectionChange("settings")}
+          variant={activeSection === "settings" ? "default" : "ghost"}
+          className="font-medium"
+        >
+          Settings
         </Button>
       </div>
     </nav>

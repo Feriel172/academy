@@ -4,10 +4,11 @@ import { useState } from "react"
 import StudentSection from "@/components/student-section"
 import TeacherSection from "@/components/teacher-section"
 import PayrollSection from "@/components/payroll-section"
+import SettingsSection from "@/components/settings-section"
 import Navigation from "@/components/navigation"
 
 export default function DashboardPage() {
-  const [activeSection, setActiveSection] = useState<"students" | "teachers" | "payroll">("students")
+  const [activeSection, setActiveSection] = useState<"students" | "teachers" | "payroll" | "settings">("students")
 
   return (
     <div className="min-h-screen bg-background">
@@ -17,6 +18,7 @@ export default function DashboardPage() {
         {activeSection === "students" && <StudentSection />}
         {activeSection === "teachers" && <TeacherSection />}
         {activeSection === "payroll" && <PayrollSection />}
+        {activeSection === "settings" && <SettingsSection />}
       </main>
     </div>
   )
