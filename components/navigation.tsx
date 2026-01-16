@@ -3,14 +3,28 @@
 import { Button } from "@/components/ui/button"
 
 interface NavigationProps {
-  activeSection: "students" | "teachers" | "payroll" | "settings"
-  onSectionChange: (section: "students" | "teachers" | "payroll" | "settings") => void
+  activeSection: "home" | "students" | "teachers" | "payroll" | "attendance" | "settings"
+  onSectionChange: (section: "home" | "students" | "teachers" | "payroll" | "attendance" | "settings") => void
 }
 
 export default function Navigation({ activeSection, onSectionChange }: NavigationProps) {
   return (
     <nav className="bg-card border-b border-border">
       <div className="max-w-7xl mx-auto px-4 py-4 flex gap-4">
+        <Button
+          onClick={() => onSectionChange("home")}
+          variant={activeSection === "home" ? "default" : "ghost"}
+          className="font-medium"
+        >
+          Home
+        </Button>
+        <Button
+          onClick={() => onSectionChange("attendance")}
+          variant={activeSection === "attendance" ? "default" : "ghost"}
+          className="font-medium"
+        >
+          Attendance
+        </Button>
         <Button
           onClick={() => onSectionChange("students")}
           variant={activeSection === "students" ? "default" : "ghost"}
